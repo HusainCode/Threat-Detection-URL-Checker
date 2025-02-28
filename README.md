@@ -1,27 +1,28 @@
 ![Project Status](https://img.shields.io/badge/status-in_progress-yellow)
 
-# Multithreaded-URL-Checker 🚀  
+# Threat Detection URL Checker 🚀  
 
-**Multithreaded URL Checker** is a Python tool designed to fetch public API URLs, check their availability using **multithreading**, and log the results in a **CSV file**. This helps improve efficiency and speed in checking multiple URLs concurrently.  
+**Threat Detection URL Checker** is a Python tool that retrieves a list of public API URLs, checks if they are classified as **threats or safe** using the **Google Web Risk API**, and logs the results into separate **CSV files**.  
 
 ## 📌 Features  
-✅ Fetches and checks multiple URLs concurrently using **multithreading**.  
-✅ Logs results in a structured **CSV file**.  
+✅ Fetches and processes multiple URLs using **multithreading**.  
+✅ Sends URLs to **Google Web Risk API** for threat analysis.  
+✅ Categorizes results into **"threat"** and **"safe"** CSV files.  
 ✅ Handles **timeouts, connection failures**, and logs errors efficiently.  
 
 ## 📜 Initial Design  
 Below is the initial design of the project, which includes the core components and their interactions:  
 
-![image](https://github.com/user-attachments/assets/c42a8763-6618-4d73-ae63-037cc0ee4f47)
-
+![image](https://github.com/user-attachments/assets/b696c095-b182-4159-b536-4562942b82df)
 
 ### **Core Components**  
 - **`URLChecker`** → Manages the overall process of checking URLs.  
-- **`URLTask`** → Runs individual URL checks using HTTP requests.  
-- **`APIHandler`** → Fetches the list of URLs to be checked.  
-- **`CSVWriter`** → Writes the results into a CSV file.  
-- **`Logger`** → Logs errors, timeouts, and connection failures for debugging.  
+- **`APIHandler`** → Fetches the list of public API URLs from a CSV file.  
+- **`ThreatAnalyzer`** → Sends URLs to the **Google Web Risk API** and determines their status.  
+- **`CSVWriter`** → Saves results into **safe_urls.csv** and **threat_urls.csv**.  
+- **`Logger`** → Logs errors, API failures, and other issues for debugging.  
 
 ⚠️ **Note:** This is the **initial design**, and modifications may be made as the project evolves.  
 
 ## 📦 Installation  
+
