@@ -25,7 +25,3 @@ Below is the initial design of the project, which includes the core components a
 ⚠️ **Note:** This is the **initial design**, and modifications may be made as the project evolves.  
 
 ## 📦 Installation  
-```sh
-git clone https://github.com/YourUsername/Multithreaded-URL-Checker.git
-cd Multithreaded-URL-Checker
-pip install -r requirements.txt
