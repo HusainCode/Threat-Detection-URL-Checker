@@ -1,4 +1,4 @@
-# # rocess of Fetching an API 🔄
+# # rocess of Fetching an API
 # # 1️ Send a request → Connect to the API using GET.
 # # 2 Receive a response → API returns data (JSON, XML, CSV, etc.).
 # # 3 Parse the response → Convert data into a usable format.
