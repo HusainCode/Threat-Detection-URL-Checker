@@ -12,7 +12,8 @@
 ## 📜 Initial Design  
 Below is the initial design of the project, which includes the core components and their interactions:  
 
-![Design Diagram](./design-diagram.png)
+![image](https://github.com/user-attachments/assets/c42a8763-6618-4d73-ae63-037cc0ee4f47)
+
 
 ### **Core Components**  
 - **`URLChecker`** → Manages the overall process of checking URLs.  
