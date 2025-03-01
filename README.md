@@ -2,7 +2,11 @@
 
 # Threat Detection URL Checker 🚀  
 
-**Threat Detection URL Checker** is a Python tool that retrieves a list of public API URLs, checks if they are classified as **threats or safe** using the **Google Web Risk API**, and logs the results into separate **CSV files**.  
+**Threat Detection URL Checker** is a Python tool that retrieves a list of public API URLs, checks if they are classified as **threats or safe** using the **Google Web Risk API**, and logs the results into separate **CSV files**.
+
+For more details, refer to the official Google Web Risk API documentation:  
+[Google Web Risk API Samples](https://cloud.google.com/web-risk/docs/samples)
+
 
 ## 📌 Features  
 ✅ Fetches and processes multiple URLs using **multithreading**.  
