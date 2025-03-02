@@ -17,7 +17,8 @@ For more details, refer to the official Google Web Risk API documentation:
 ## 📜 Initial Design  
 Below is the initial design of the project, which includes the core components and their interactions:  
 
-![image](https://github.com/user-attachments/assets/b696c095-b182-4159-b536-4562942b82df)
+![image](https://github.com/user-attachments/assets/91882e77-7f11-4bee-ad4a-b2b60dff121b)
+
 
 ### **Core Components**  
 - **`URLChecker`** → Manages the overall process of checking URLs.  
