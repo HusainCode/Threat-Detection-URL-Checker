@@ -1,17 +1,28 @@
 # # Process of Fetching an API
 # # 1️ Send a request → Connect to the API using GET.
-# # 2 Receive a response → API returns data (JSON, XML, CSV, etc.).
+# # 2 Receives a response → API returns data (JSON, XML, CSV, etc.).
 # # 3 Parse the response → Convert data into a usable format.
 # # 4 Extract URLs → Filter out relevant URLs from the data.
 # # 5️ Use the URLs → Pass them to your checker for processing
 #
+# APIHandler is responsible
+#
+#  Purpose:
+#
+#  Key Attributes:
+#
+#
+#  Main Methods:
+#
 import requests
 import os  #Provides functions to interact
-           # with the operating system, including environment variables
-from dotenv import load_dotenv # Loads environment variables from a .env file
-from pathlib import Path # Handles file system paths in a cross-platform way
+# with the operating system, including environment variables
+from dotenv import load_dotenv  # Loads environment variables from a .env file
+from pathlib import Path  # Handles file system paths in a cross-platform way
 from google.cloud import webrisk_v1
 from google.cloud.webrisk_v1 import SearchUrisResponse
+import threading
+import time
 
 
 class APIHandler:
@@ -23,14 +34,21 @@ class APIHandler:
                             &uri=https://theaxolotlapi.netlify.app/,Animals")
 
         """
-          1- Threat typs to test against 
-          2- ThreatType.THREAT_TYPE_UNSPECIFIED
-          3- ThreatType.MALWARE
-          4- ThreatType.SOCIAL_ENGINEERING
-          5- ThreatType.UNWANTED_SOFTWARE
-          6- ThreatType.SOCIAL_ENGINEERING_EXTENDED_COVERAGE
+          According to the doc there are the only threat typs the API can check
+          Threat typs to test against:
+          1- ThreatType.MALWARE
+          2- ThreatType.SOCIAL_ENGINEERING
+          3- ThreatType.UNWANTED_SOFTWARE
+          4- ThreatType.SOCIAL_ENGINEERING_EXTENDED_COVERAGE
          """
-        self.THREAT_TYPE = frozenset(threat for threat in webrisk_v1.ThreatType)
+        valid_threats = frozenset([
+
+            webrisk_v1.ThreatType.MALWARE,
+            webrisk_v1.ThreatType.SOCIAL_ENGINEERING,
+            webrisk_v1.ThreatType.UNWANTED_SOFTWARE,
+            webrisk_v1.ThreatType.SOCIAL_ENGINEERING_EXTENDED_COVERAGE,
+        ])
+        self.THREAT_TYPE = frozenset(threat for threat in valid_threats)
 
     def __prepare_API(self):
         # Loads API key securely from .env file
@@ -42,7 +60,7 @@ class APIHandler:
     def fetching_API_data(self):
         response = requests.get(self.API_SOURCE)
 
-        # First, check if response is valid before calling .json()
+        # check if response is valid before calling .json()
         if response.status_code == 200 and response.text.strip():
             try:
                 return response.json()  # Convert response to JSON
@@ -54,7 +72,7 @@ class APIHandler:
             return None
 
     # Source: https://cloud.google.com/web-risk/docs/lookup-api#python
-    def search_uri(self,api: str) -> SearchUrisResponse:
+    def search_uri(self, api: str) -> SearchUrisResponse:
         """Checks whether a URI is on a given threatList.
 
             Multiple threatLists may be searched in a single query. The response will list all
@@ -64,8 +82,6 @@ class APIHandler:
             Args:
                 uri: The URI to be checked for matches
                     Example: "http://testsafebrowsing.appspot.com/s/malware.html"
-                threat_type: The ThreatLists to search in. Multiple ThreatLists may be specified.
-                    Example: threat_type = webrisk_v1.ThreatType.MALWARE
 
             Returns:
                 SearchUrisResponse that contains a threat_type if the URI is present in the threatList.
@@ -87,11 +103,5 @@ class APIHandler:
         return response
 
 
-
-
-
 API = APIHandler()
 API.search_uri("https://theaxolotlapi.netlify.app/,Animals")
-
-
-
