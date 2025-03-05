@@ -14,21 +14,24 @@
 #
 #  Main Methods:
 #
-import requests
-import os  #Provides functions to interact
+import httpx
+import os  # Provides functions to interact
 # with the operating system, including environment variables
 from dotenv import load_dotenv  # Loads environment variables from a .env file
 from pathlib import Path  # Handles file system paths in a cross-platform way
 from google.cloud import webrisk_v1
 from google.cloud.webrisk_v1 import SearchUrisResponse
-import threading
+from google.oauth2 import service_account
+from src.csv_handler import CVSHandler
+import asyncio
+import json
+import aiohttp
 import time
 
 
 class APIHandler:
 
     def __init__(self):
-
         self.API_KEY = self.__prepare_API()
         self.API_SOURCE = (f"https://webrisk.googleapis.com/v1/uris:search?key={self.API_KEY} \
                             &uri=https://theaxolotlapi.netlify.app/,Animals")
@@ -50,58 +53,96 @@ class APIHandler:
         ])
         self.THREAT_TYPE = frozenset(threat for threat in valid_threats)
 
-    def __prepare_API(self):
+        self.credentials = service_account.Credentials.from_service_account_file(
+            "key.json"
+        )
+
+        self.CVSHandler = CVSHandler()
+
+    def __prepare_API(self) -> str:
         # Loads API key securely from .env file
         load_dotenv(Path(__file__).resolve().parent / ".env")
         # Set Google credentials
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
         return os.getenv("GOOGLE_API_KEY")
 
-    def fetching_API_data(self):
-        response = requests.get(self.API_SOURCE)
+    async def fetching_API_data(self) -> str:
+        '''
+        Sends an asynchronous GET request to the Google webrisk API
 
-        # check if response is valid before calling .json()
-        if response.status_code == 200 and response.text.strip():
-            try:
-                return response.json()  # Convert response to JSON
-            except requests.exceptions.JSONDecodeError:
-                print("Error: Response is not valid JSON")
-                return None
-        else:
-            print(f"Error: {response.status_code}")
-            return None
+        :param URL: The API endpoint to fetch the data from
+
+        :return: JSON response, if error is detected, return the error
+        '''
+
+        # Send a GET request to the server
+        async with httpx.get(self.API_SOURCE, timeout=5.0) as response: # timeout is 5 for now, adjust later
+            response.raise_for_status() # raise http error, example: 4xx/5xx
+            response.status_code = response.text.strip()
+            success_responses = 200 # added a variable here in case this gets large
+
+            if response.status_code == success_responses:
+                try:
+                    return await response.json()  # Convert response to JSON
+                except json.JSONDecodeError:
+                    print("Error: Response is not valid JSON")
+                except (httpx.TimeoutException, httpx.NetworkError)as e:
+                    print(f"Network error: {e}")
+                except httpx.HTTPStatusError as e:
+                  # Examples:
+                  # 404 Not Found (wrong URL)
+                  # 500 Internal Server Error (server issue)
+                  # 403 Forbidden (you don’t have permission)
+                  print(f"Http Error: {response.status_code}:{e}")
+                except httpx.RequestError as e:
+                    print(f"Request failed: {e}")
+
+                    # I STOPPED HERE
+                    # NEEDS TO ASYNC
+
 
     # Source: https://cloud.google.com/web-risk/docs/lookup-api#python
-    def search_uri(self, api: str) -> SearchUrisResponse:
-        """Checks whether a URI is on a given threatList.
 
-            Multiple threatLists may be searched in a single query. The response will list all
-            requested threatLists the URI was found to match. If the URI is not
-            found on any of the requested ThreatList an empty response will be returned.
 
-            Args:
-                uri: The URI to be checked for matches
-                    Example: "http://testsafebrowsing.appspot.com/s/malware.html"
+def search_uri(self, api: str) -> SearchUrisResponse:
+    """Checks whether a URI is on a given threatList.
 
-            Returns:
-                SearchUrisResponse that contains a threat_type if the URI is present in the threatList.
-            """
+        Multiple threatLists may be searched in a single query. The response will list all
+        requested threatLists the URI was found to match. If the URI is not
+        found on any of the requested ThreatList an empty response will be returned.
 
-        # Initialize web risk client
-        # Creat a connection to the Google API
-        webrisk_client = webrisk_v1.WebRiskServiceClient()
+        Args:
+            uri: The URI to be checked for matches
+                Example: "http://testsafebrowsing.appspot.com/s/malware.html"
 
-        request = webrisk_v1.SearchUrisRequest()  # Specify the type of threat
-        request.threat_types = self.THREAT_TYPE
-        request.uri = api
+        Returns:
+            SearchUrisResponse that contains a threat_type if the URI is present in the threatList.
+        """
 
-        response = webrisk_client.search_uris(request)
-        if response.threat.threat_types:
-            print(f"This API is not safe! It has the following threat:{response}")
-        else:
-            print(f"This API is safe!")
-        return response
+    # Initialize web risk client
+    # Creat a connection to the Google API
+    webrisk_client = webrisk_v1.WebRiskServiceClient(credentials=self.credentials)
+
+    request = webrisk_v1.SearchUrisRequest()  # Specify the type of threat
+    request.threat_types = self.THREAT_TYPE
+    request.uri = api
+
+    response = webrisk_client.search_uris(request)
+    if response.threat.threat_types:
+        print(f"This API is not safe! It has the following threat:{response}")
+    else:
+        print(f"This API is safe!")
+    return response
+
+    # process the coming APIs list
+
+
+async def process_requests(self,  API):
+    pass
+
+
 
 
 API = APIHandler()
-API.search_uri("https://theaxolotlapi.netlify.app/,Animals")
+asyncio.run(API.fetching_API_data())
+# API.search_uri("https://theaxolotlapi.netlify.app/,Animals")

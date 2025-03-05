@@ -42,8 +42,7 @@ class CVSHandler:
             description = [row["Description"] for row in descriptions]
             return description
 
-            # I STOPPED HERE
-            # NEXT NEEDS TO PASS THE APIs and the descriptions
+
 
 # h1 = CVSHandler()
 #
