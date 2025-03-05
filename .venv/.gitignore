@@ -1,8 +1,0 @@
-# created by virtualenv automatically
-*# Ignore the specific JSON file
-src/lateral-name-452407-t7-3bf842b0375c.json
-
-# Ignore all .env files
-.env
-
-key.json
