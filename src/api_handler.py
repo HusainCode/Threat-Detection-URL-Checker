@@ -25,15 +25,22 @@ from google.oauth2 import service_account
 from src.csv_handler import CVSHandler
 import asyncio
 import json
+import csv
 import aiohttp
 import time
 
+# Loads API key securely from .env file
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
+# Set Google credentials
+CREDENTIALS_PATH = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+API_KEY = os.getenv("GOOGLE_API_KEY")
 
 class APIHandler:
+    CURRENT_LIMIT = 5 # API rate limits to prevent overloading
 
     def __init__(self):
-        self.API_KEY = self.__prepare_API()
-        self.API_SOURCE = (f"https://webrisk.googleapis.com/v1/uris:search?key={self.API_KEY} \
+        self.API_SOURCE = (f"https://webrisk.googleapis.com/v1/uris:search?key={API_KEY} \
                             &uri=https://theaxolotlapi.netlify.app/,Animals")
 
         """
@@ -59,12 +66,6 @@ class APIHandler:
 
         self.CVSHandler = CVSHandler()
 
-    def __prepare_API(self) -> str:
-        # Loads API key securely from .env file
-        load_dotenv(Path(__file__).resolve().parent / ".env")
-        # Set Google credentials
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-        return os.getenv("GOOGLE_API_KEY")
 
     async def fetching_API_data(self) -> str:
         '''
@@ -76,17 +77,18 @@ class APIHandler:
         '''
 
         # Send a GET request to the server
-        async with httpx.get(self.API_SOURCE, timeout=5.0) as response: # timeout is 5 for now, adjust later
+        async with httpx.AsyncClient() as client:
+            response = await client.get(self.API_SOURCE, timeout=5.0) # timeout is 5 for now, adjust later
             response.raise_for_status() # raise http error, example: 4xx/5xx
-            response.status_code = response.text.strip()
-            success_responses = 200 # added a variable here in case this gets large
+
+            success_responses = 200  # Define success condition
 
             if response.status_code == success_responses:
                 try:
-                    return await response.json()  # Convert response to JSON
+                    return response.json()  # Convert response to JSON
                 except json.JSONDecodeError:
                     print("Error: Response is not valid JSON")
-                except (httpx.TimeoutException, httpx.NetworkError)as e:
+                except (httpx.TimeoutException, httpx.ConnectError) as e:
                     print(f"Network error: {e}")
                 except httpx.HTTPStatusError as e:
                   # Examples:
@@ -96,6 +98,7 @@ class APIHandler:
                   print(f"Http Error: {response.status_code}:{e}")
                 except httpx.RequestError as e:
                     print(f"Request failed: {e}")
+
 
                     # I STOPPED HERE
                     # NEEDS TO ASYNC
@@ -137,7 +140,7 @@ def search_uri(self, api: str) -> SearchUrisResponse:
     # process the coming APIs list
 
 
-async def process_requests(self,  API):
+async def worker(self,  API):
     pass
 
 
