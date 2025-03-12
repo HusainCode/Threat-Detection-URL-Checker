@@ -15,6 +15,7 @@
 import csv
 import os
 from dotenv import load_dotenv
+import asyncio
 
 
 class CVSHandler:
@@ -42,6 +43,21 @@ class CVSHandler:
             description = [row["Description"] for row in descriptions]
             return description
 
+    async def save_results_to_csv(self):
+        results_file = "results.csv"
+
+        with open(results_file, 'a', newline='',encoding="utf-8") as file:
+            writer = csv.writer(file)
+
+            if file.tell() == 0:
+                writer.writerow(["URL", "Threat Type"])
+
+            # Save each URL’s threat analysis
+            for url, response in results_file.items():
+                threat = response.threat.threat_types if response.threat else "Safe"
+                writer.writerow([url, threat])
+
+                # I STOPPED HERE 
 
 
 # h1 = CVSHandler()
