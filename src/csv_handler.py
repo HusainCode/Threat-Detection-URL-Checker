@@ -1,66 +1,30 @@
-# CVSHandler is responsible for loading API data from a CSV file.
-#
-#  Purpose:
-# - Reads a CSV file path from a hidden `.env` file
-# - Extracts API URLs and descriptions from the CSV
-#
-#  Key Attributes:
-#  self.PUBLIC_APIs_LIST stores the file path of the CSV
-#
-#  Main Methods:
-# 1.  __prepare_file_path() Loads the CSV file path from `.env`
-# 2. load_API_link() Extracts API links from the CSV
-# 3. load_description() Extracts API descriptions from the CSV
-
 import csv
 import os
 from dotenv import load_dotenv
-import asyncio
-
 
 class CVSHandler:
     def __init__(self):
         self.__prepare_file_path()
 
-    # load the path from the '.env' hidden file
     def __prepare_file_path(self) -> None:
         load_dotenv()
         self.PUBLIC_APIs_LIST = os.getenv("CSV_FILE")
 
-    # load the API links
-    # Example: https://theaxolotlapi.netlify.app/
     def load_API_link(self) -> list:
-        with open(self.PUBLIC_APIs_LIST, newline="", encoding="utf-8") as links_file:
-            links = csv.DictReader(links_file)
-            url = [row['Link'] for row in links]  # store links in a list
-            return url
+        """Loads API links from the CSV file."""
+        with open(self.PUBLIC_APIs_LIST, newline="", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            return [row["Link"] for row in reader]
 
-    # Loads APIs descriptions
-    # Example: Collection of axolotl pictures and facts
-    def load_description(self) -> list:
-        with open(self.PUBLIC_APIs_LIST, newline="", encoding="utf-8") as descriptions_file:
-            descriptions = csv.DictReader(descriptions_file)
-            description = [row["Description"] for row in descriptions]
-            return description
-
-    async def save_results_to_csv(self):
+    def save_results_to_csv(self, results: dict):
+        """Saves URL scan results to a CSV file."""
         results_file = "results.csv"
 
-        with open(results_file, 'a', newline='',encoding="utf-8") as file:
+        with open(results_file, 'a', newline='', encoding="utf-8") as file:
             writer = csv.writer(file)
 
             if file.tell() == 0:
                 writer.writerow(["URL", "Threat Type"])
 
-            # Save each URL’s threat analysis
-            for url, response in results_file.items():
-                threat = response.threat.threat_types if response.threat else "Safe"
+            for url, threat in results.items():
                 writer.writerow([url, threat])
-
-                # I STOPPED HERE 
-
-
-# h1 = CVSHandler()
-#
-# print(h1.load_description())
-# print("\n",h1.load_API_link())
