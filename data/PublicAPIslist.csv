@@ -921,3 +921,9 @@
 919,weather-api,A RESTful free API to check the weather,,True,no,https://github.com/robertoduessmann/weather-api,Weather
 920,Weatherbit,Weather,apiKey,True,unknown,https://www.weatherbit.io/api,Weather
 921,wttr,:partly_sunny: The right way to check the weather,,True,unknown,https://github.com/chubin/wttr.in,Weather
+922,Google Web Risk API,Safe URL for malware testing,None,True,Yes,http://malware.testing.google.test/testing/malware/,Security
+923,Google Web Risk API,Safe URL for social engineering testing,None,True,Yes,http://testsafebrowsing.appspot.com/s/phishing.html,Security
+924,Google Web Risk API,Safe URL for unwanted software testing,None,True,Yes,http://testsafebrowsing.appspot.com/s/unwanted.html,Security
+925,Google Web Risk API,Safe URL for malware testing,None,True,Yes,http://testsafebrowsing.appspot.com/s/malware.html,Security
+
+

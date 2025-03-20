@@ -29,4 +29,5 @@ async def main():
     logger.info("Process completed successfully.")
 
 if __name__ == "__main__":
+    print("Processing your request.....")
     asyncio.run(main())
