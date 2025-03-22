@@ -1,10 +1,21 @@
-# APIHandler is responsible
-#
 #  Purpose:
+#     Handles the interaction with Google's Web Risk API to analyze URLs
+#     for potential threats such as malware or phishing.
 #
 #  Key Attributes:
+#     THREAT_TYPE: List of threat types checked against the API
+#     credentials: Google service account credentials
+#     webrisk_client: WebRisk API client
+#     csv_handler: Handles input/output CSV operations
+#     logger: Logs events, results, and errors
+#     queue: Async queue for URLs
+#     semaphore: Limits concurrent API requests
 #
 #  Main Methods:
+#     search_uri(uri): Asynchronously checks a URL against Google Web Risk
+#     worker(): Async worker that pulls from the queue and processes a URL
+#     process_urls(): Loads URLs from CSV, creates workers, and stores results
+
 
 import os # Provides functions to interact with the operating system, including environment variables
 import asyncio # Provides async functionalities
@@ -13,8 +24,8 @@ from google.cloud import webrisk_v1
 from google.oauth2 import service_account
 from google.api_core.exceptions import InvalidArgument, PermissionDenied, NotFound, InternalServerError
 
-from src.csv_handler import CVSHandler
-from src.logger import Logger
+from threat_analyzer.csv_handler import CSVHandler
+from threat_analyzer.logger import Logger
 
 # Loads variables from .env
 load_dotenv()
@@ -24,7 +35,6 @@ CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
 class APIHandler:
-    CURRENT_LIMIT = 5  # API rate limit
 
     def __init__(self):
         """
@@ -55,17 +65,20 @@ class APIHandler:
             webrisk_v1.ThreatType.SOCIAL_ENGINEERING_EXTENDED_COVERAGE,
         ]
 
+        self.api_key = os.getenv("GOOGLE_API_KEY")
+
+
         # This is essential to process requests.
         # The Google API provides the key.json credentials to process requests.
         # Loads Google service account credentials form the json file to authenticate API access.
-        self.credentials = service_account.Credentials.from_service_account_file("key.json")
+        self.credentials = service_account.Credentials.from_service_account_file("../resources/key.json")
 
         # Create clint object
         # This part is essential to interact with the Google Web Risk API
         # You must first initialize the client before using any of the Google Web Risk API features
         self.webrisk_client = webrisk_v1.WebRiskServiceClient(credentials=self.credentials)
 
-        self.csv_handler = CVSHandler()
+        self.csv_handler = CSVHandler()
         self.logger = Logger()
 
         self.queue = asyncio.Queue()

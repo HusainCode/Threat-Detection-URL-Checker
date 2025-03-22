@@ -1,5 +1,12 @@
-src/key.json
-src/.env
-.env
-.venv
+# Python venv
+.venv/
 __pycache__/
+
+# Sensitive config
+.env
+resources/key.json
+resources/log.txt
+profile_output.prof
+
+# IDE stuff
+.idea/

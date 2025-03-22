@@ -1,20 +1,39 @@
+# Purpose:
+#   Handle CSV input/output operations including loading API links,
+#   saving results, and calculating threat percentages.
+#
+# Key Attributes:
+#   csv_path: Path to the input CSV file (from .env)
+#   results_file: Path to the results output CSV (from .env)
+#
+# Main Methods:
+#   load_API_link()
+#  save_results_to_csv(results)
+#   get_percentage()
+
 import csv
 import os
 from collections import Counter
-from dotenv import load_dotenv
 
-class CVSHandler:
+import os
+
+import os
+
+class CSVHandler:
     def __init__(self):
-        self.results_file = "results.csv"
-        self.__prepare_file_path()
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-    def __prepare_file_path(self) -> None:
-        load_dotenv()
-        self.PUBLIC_APIs_LIST = os.getenv("CSV_FILE")
+        self.csv_path = os.path.join(base_dir, os.getenv("CSV_FILE"))
+        self.results_file = os.path.join(base_dir, os.getenv("RESULTS_FILE"))
+
+        # Optional: print paths for debugging
+        print(f"[DEBUG] CSV path: {self.csv_path}")
+        print(f"[DEBUG] Results path: {self.results_file}")
+
 
     def load_API_link(self) -> list:
         """Loads API links from the CSV file."""
-        with open(self.PUBLIC_APIs_LIST, newline="", encoding="utf-8") as file:
+        with open(self.csv_path, newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
             return [row["Link"] for row in reader]
 
@@ -29,7 +48,7 @@ class CVSHandler:
             for url, threat in results.items():
                 writer.writerow([url, threat])
 
-    def get_percentage(self):
+    def get_percentage(self) -> dict:
         if not self.results_file:
             raise ValueError("Results file is not set. Run save_results_to_csv first")
 
