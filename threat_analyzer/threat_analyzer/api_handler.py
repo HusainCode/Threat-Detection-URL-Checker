@@ -125,3 +125,7 @@ class APIHandler:
         results = await asyncio.gather(*workers)
 
         self.csv_handler.save_results_to_csv(dict(results))
+
+    @property
+    def get_threat_types(self) -> list:
+        return  self.THREAT_TYPE
