@@ -68,13 +68,15 @@ Multithreaded-URL-Checker/
 - GitHub Actions automatically runs tests on every push and pull request to main
 
 Run tests locally:
+Note: GitHub Actions is configured but currently inactive due to free tier CI usage limits.
 
 ```bash
 python -m unittest discover -s threat_analyzer/test
 ```
 
-CI Status:
+## CI Status
 
+![CI](https://github.com/HusainCode/Threat-Detection-URL-Checker/actions/workflows/python-tests.yml/badge.svg)
 
 ## Technologies Used
 
