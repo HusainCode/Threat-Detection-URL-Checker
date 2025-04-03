@@ -1,10 +1,25 @@
+## Project Status
+
+[![Project Status](https://img.shields.io/badge/status-in_progress-yellow)]()
+
 # Threat Detection URL Checker
 
 Threat Detection URL Checker is a Python-based tool that analyzes URLs using the Google Web Risk API, logs categorized results into CSV files, and visualizes threat data. It is designed with modular components, supports automation through CI/CD, and includes full documentation.
 
-## Project Status
 
-[![Project Status](https://img.shields.io/badge/status-in_progress-yellow)]()
+## Table of Contents
+
+- [Features](#features)
+- [Architecture Overview](#architecture-overview)
+- [Core Components](#core-components)
+- [Project Structure](#project-structure)
+- [Testing & CI](#automated-testing--ci)
+- [Installation](#installation)
+- [Output](#output)
+- [Technologies Used](#technologies-used)
+- [Documentation](#documentation)
+- [Video Explanation](#video-explanation)
+- [Author](#author)
 
 ## Features
 
@@ -22,9 +37,60 @@ Threat Detection URL Checker is a Python-based tool that analyzes URLs using the
 
 ## Architecture Overview
 
-Below is the initial design of the project, which includes the core components and their interactions:
+Below is the architecture design of the project, which outlines the core components and their interactions:
 
-![image](https://github.com/user-attachments/assets/91882e77-7f11-4bee-ad4a-b2b60dff121b)
+![image](https://github.com/user-attachments/assets/f8643f1e-f990-4dd0-8c62-9f93ecbbea34)
+# 🏗️ Architecture Overview
+
+Below is the **architecture design** of the project, which outlines the **core components** and their **interactions**.
+
+---
+
+## 📦 Core Modules
+
+| Component         | Responsibility |
+|------------------|----------------|
+| `APIHandler`     | Interacts with Google Web Risk API to analyze URLs for threats. Manages concurrency and async processing. |
+| `CSVHandler`     | Loads input URLs from CSV and saves threat analysis results. Also calculates threat-type percentages. |
+| `Logger`         | Handles centralized logging of info, warnings, and errors to a log file. |
+| `ThreatAnalyzer` | Reads results and generates visual charts (pie chart of threat types) using `matplotlib`. |
+| `main.py`        | Entry point. Orchestrates the entire analysis flow  loading data, calling the API, saving results, and generating charts. |
+
+---
+
+## 🧪 Testing Modules
+
+| Test File                  | Description |
+|---------------------------|-------------|
+| `test_api_handler.py`     | Tests the initialization and threat-type config of `APIHandler`. |
+| `test_csv_writer.py`      | Tests CSV read/write and percentage logic in `CSVHandler`. |
+| `test_threat_analyzer.py` | Tests chart generation and empty-data handling in `ThreatAnalyzer`. |
+
+---
+
+## 🔁 Component Interactions
+
+1. `main.py` initializes:
+   - `Logger`
+   - `CSVHandler`
+   - `APIHandler`
+   - `ThreatAnalyzer`
+
+2. `APIHandler`:
+   - Uses `CSVHandler` to load URLs
+   - Uses `Logger` to log the scanning process
+   - Sends requests to **Google Web Risk API**
+
+3. After scanning:
+   - Results are saved via `CSVHandler`
+   - `ThreatAnalyzer` reads results and generates a pie chart
+
+4. Logs, results, and chart are stored in the `resources/` folder.
+
+---
+
+> 💡 All environment variables and paths are defined in `.env` for centralized configuration.
+
 
 ### Core Components
 
