@@ -63,13 +63,15 @@ async def main():
     logger.info("Process completed successfully.")
 
 if __name__ == "__main__":
-    start = time.time()
+    start = time.perf_counter()
 
     print("Processing your request.....")
     asyncio.run(main())
 
     print("\nProcess completed successfully.")
-    print(f"The program took: {time.time() - start:.2f} seconds")
+
+    end = time.perf_counter()
+    print(f"The program took: {end - start:.2f} seconds")
 
 
 # Run full-app profiling and save results:

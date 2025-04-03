@@ -61,8 +61,11 @@ class TestCSVHandler(unittest.TestCase):
 
     def test_get_percentage(self):
         # Prepare fake results CSV
+        # Open the fake results file in write mode
         with open(self.results_file.name, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f) # this method takes a file object, returns a writer object
+            # Write a header just like a real CSV file
+
             writer.writerow(["URL", "Threat Type"])
             writer.writerow(["https://site1.com", "SAFE"])
             writer.writerow(["https://site2.com", "MALWARE"])
