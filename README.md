@@ -35,14 +35,11 @@ Threat Detection URL Checker is a Python-based tool that analyzes URLs using the
 
 ---
 
-## Architecture Overview
-
-Below is the architecture design of the project, which outlines the core components and their interactions:
-
-![image](https://github.com/user-attachments/assets/f8643f1e-f990-4dd0-8c62-9f93ecbbea34)
 # 🏗️ Architecture Overview
 
 Below is the **architecture design** of the project, which outlines the **core components** and their **interactions**.
+
+![image](https://github.com/user-attachments/assets/f8643f1e-f990-4dd0-8c62-9f93ecbbea34)
 
 ---
 
