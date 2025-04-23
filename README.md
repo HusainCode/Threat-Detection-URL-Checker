@@ -151,12 +151,6 @@ python -m unittest discover -s threat_analyzer/test
 - GitHub Actions
 - Docker (optional)
 
-## Documentation
-
-View full documentation on Confluence:  
-[Threat Analyzer Docs (Public)](https://softwareengineerforlife.atlassian.net/wiki/x/EAEB)
-
-
 ## Video Explanation
 
 Watch the full walkthrough of this project on YouTube:
